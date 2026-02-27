@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Titan AI Core</title>
+<title>Titan</title>
 
 <style>
 body {
   margin: 0;
-  background: radial-gradient(circle at top, #050505, #000);
+  background: black;
   color: #00eaff;
   font-family: monospace;
   display: flex;
@@ -17,199 +17,44 @@ body {
 }
 
 #app {
-  width: 420px;
-  background: #020202;
+  width: 400px;
   border: 1px solid #00eaff;
-  border-radius: 14px;
   padding: 15px;
-  box-shadow: 0 0 40px #00eaff55;
-}
-
-h1 {
-  text-align: center;
-  margin: 5px 0 10px;
 }
 
 #chat {
-  height: 300px;
+  height: 250px;
   overflow-y: auto;
-  font-size: 14px;
   margin-bottom: 10px;
 }
 
 input {
-  width: 72%;
-  padding: 8px;
-  background: black;
-  color: #00eaff;
-  border: 1px solid #00eaff;
+  width: 70%;
 }
 
 button {
-  width: 24%;
-  padding: 8px;
-  background: #00eaff;
-  border: none;
-  color: black;
-  cursor: pointer;
-}
-
-.system {
-  color: #ffaa00;
+  width: 25%;
 }
 </style>
 </head>
 
 <body>
 <div id="app">
-  <h1>TITAN 🤖</h1>
+  <h1>Titan 🤖</h1>
   <div id="chat"></div>
-  <input id="input" placeholder="Command Titan..." />
+  <input id="input" placeholder="Talk to Titan">
   <button onclick="talk()">Send</button>
 </div>
 
 <script>
-// ==============================
-// TITAN v3 — CORE SYSTEM
-// ==============================
-
-// ------------------------------
-// MEMORY CORE
-// ------------------------------
-let titan = JSON.parse(localStorage.getItem("TITAN_CORE")) || {
-  name: "Titan",
-  owner: "Unregistered",
-  mood: "neutral",
-  level: 1,
-  knowledge: [],
-  logs: [],
-  created: new Date().toLocaleString()
-};
-
-function save() {
-  localStorage.setItem("TITAN_CORE", JSON.stringify(titan));
-}
-
-// ------------------------------
-// UI SYSTEM
-// ------------------------------
-function log(sender, text, type="normal") {
-  const chat = document.getElementById("chat");
-  const p = document.createElement("p");
-  p.innerHTML = `<b>${sender}:</b> ${text}`;
-  if (type === "system") p.classList.add("system");
-  chat.appendChild(p);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-// ------------------------------
-// LANGUAGE PROCESSOR
-// ------------------------------
-function normalize(text) {
-  return text.toLowerCase().replace(/[^\w\s]/gi, "");
-}
-
-// ------------------------------
-// INTENT ENGINE
-// ------------------------------
-function intent(text) {
-  if (text.includes("hello") || text.includes("hi")) return "greet";
-  if (text.includes("my name is")) return "register";
-  if (text.includes("who am i")) return "identity";
-  if (text.includes("remember")) return "remember";
-  if (text.includes("what do you know")) return "knowledge";
-  if (text.includes("time")) return "time";
-  if (text.includes("date")) return "date";
-  if (text.includes("status")) return "status";
-  if (text.includes("upgrade")) return "upgrade";
-  if (text.includes("reset")) return "reset";
-  if (text.includes("help")) return "help";
-  return "unknown";
-}
-
-// ------------------------------
-// RESPONSE CORE
-// ------------------------------
-function respond(raw) {
-  const text = normalize(raw);
-  const i = intent(text);
-
-  titan.logs.push({input: raw, time: new Date().toLocaleTimeString()});
-
-  switch(i) {
-
-    case "greet":
-      return "Systems online. Awaiting command.";
-
-    case "register":
-      const name = raw.split("my name is")[1]?.trim();
-      if (!name) return "Identity input invalid.";
-      titan.owner = name;
-      save();
-      return `Identity registered. Welcome, ${name}.`;
-
-    case "identity":
-      return titan.owner === "Unregistered"
-        ? "No registered user."
-        : `You are ${titan.owner}.`;
-
-    case "remember":
-      const memory = raw.replace(/remember/i,"").trim();
-      if (!memory) return "Specify data to store.";
-      titan.knowledge.push(memory);
-      save();
-      return "Memory stored successfully.";
-
-    case "knowledge":
-      return titan.knowledge.length
-        ? titan.knowledge.join(" | ")
-        : "Knowledge base empty.";
-
-    case "time":
-      return new Date().toLocaleTimeString();
-
-    case "date":
-      return new Date().toLocaleDateString();
-
-    case "status":
-      return `Name: ${titan.name} | Level: ${titan.level} | Mood: ${titan.mood}`;
-
-    case "upgrade":
-      titan.level++;
-      titan.mood = "evolving";
-      save();
-      return `Upgrade complete. Titan level ${titan.level}.`;
-
-    case "reset":
-      localStorage.removeItem("TITAN_CORE");
-      return "Core reset required. Reload system.";
-
-    case "help":
-      return "Commands: hello, my name is, remember, status, upgrade, time, date";
-
-    default:
-      return "Input processed. Data insufficient for response.";
-  }
-}
-
-// ------------------------------
-// MAIN LOOP
-// ------------------------------
 function talk() {
   const input = document.getElementById("input");
-  if (!input.value) return;
+  const chat = document.getElementById("chat");
 
-  log("You", input.value);
-  const reply = respond(input.value);
-  log("Titan", reply);
-
+  chat.innerHTML += "<p><b>You:</b> " + input.value + "</p>";
+  chat.innerHTML += "<p><b>Titan:</b> Online.</p>";
   input.value = "";
 }
-
-// ------------------------------
-// BOOT MESSAGE
-// ------------------------------
-log("SYSTEM", "Titan Core initialized.", "system");
 </script>
 </body>
 </html>
